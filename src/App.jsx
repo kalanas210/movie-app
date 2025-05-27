@@ -42,7 +42,7 @@ const App = () => {
                     <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
 
                 <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                {/*<h1 className="text-white">{searchTerm}</h1>*/}
+                <h1 className="text-white">{searchTerm}</h1>
                 </header>
 
                 <section className="all-movies">
