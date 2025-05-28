@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import MovieCard from './components/MovieCard';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import Navbar, { SearchProvider } from './components/Navbar';
+import MovieDetails from './components/MovieDetails';
+import HomePage from './components/HomePage';
 import { getPopularMovies, searchMovies } from './services/movieApi';
 
 function App() {
@@ -25,10 +27,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchMovies(1, searchQuery);
-  }, [searchQuery]);
-
   const handleSearch = (query) => {
     setSearchQuery(query);
     setPage(1);
@@ -41,33 +39,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <Navbar onSearch={handleSearch} />
-      <div className="container mx-auto px-4 pt-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-8">
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
+    <Router>
+      <SearchProvider>
+        <div className="min-h-screen bg-gray-900">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/movie/:id" element={<MovieDetails />} />
+          </Routes>
         </div>
-        
-        {error && (
-          <div className="text-red-500 text-center my-4">{error}</div>
-        )}
-        
-        {loading ? (
-          <div className="text-white text-center my-4">Loading...</div>
-        ) : (
-          <div className="flex justify-center my-8">
-            <button
-              onClick={loadMore}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Load More
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      </SearchProvider>
+    </Router>
   );
 }
 
