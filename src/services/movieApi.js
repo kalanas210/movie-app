@@ -40,4 +40,18 @@ export const searchMovies = async (query, page = 1) => {
     console.error('Error searching movies:', error);
     throw error;
   }
+};
+
+export const getMovieDetails = async (movieId) => {
+  try {
+    const response = await api.get(`/movie/${movieId}`, {
+      params: {
+        language: 'en-US',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+    throw error;
+  }
 }; 
