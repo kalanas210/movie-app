@@ -1,58 +1,74 @@
-import React, {useEffect, useState} from 'react';
-import Search from "./components/Search.jsx";
+import { useState, useEffect } from 'react';
+import Navbar from './components/Navbar';
+import MovieCard from './components/MovieCard';
+import { getPopularMovies, searchMovies } from './services/movieApi';
 
-const API_BASE_URL = "https://api.themoviedb.org/3";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const API_OPTIONS = {
-    method: "GET",
-    headers: {
-        accept: "application/json",
-        authorization: `Bearer ${API_KEY}`
+function App() {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const fetchMovies = async (pageNum = 1, query = '') => {
+    try {
+      setLoading(true);
+      const data = query
+        ? await searchMovies(query, pageNum)
+        : await getPopularMovies(pageNum);
+      setMovies(prevMovies => pageNum === 1 ? data.results : [...prevMovies, ...data.results]);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch movies. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-}
-const App = () => {
+  };
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+  useEffect(() => {
+    fetchMovies(1, searchQuery);
+  }, [searchQuery]);
 
-    const fetchMovies = async () => {
-        try{
-            const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
-            const response = await fetch(endpoint, API_OPTIONS);
-            alert(response);
-            if(!response.ok){
-                throw new Error("Failed to fetch movies");
-            }
-        } catch (e) {
-            console.log(e);
-            setErrorMessage("error fetching movies please try again later");
-        }
-    }
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setPage(1);
+  };
 
-    useEffect(() => {
-          fetchMovies();
-    },[])
-    
-    return (
-        <main>
-            <div className="pattern"  />
-            <div className="wrapper">
-                <header>
-                    <img src="./hero-img.png" alt="hero image" />
-                    <h1>Find <span className="text-gradient">Movies</span> You'll Enjoy Without the Hassle</h1>
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchMovies(nextPage, searchQuery);
+  };
 
-                <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                <h1 className="text-white">{searchTerm}</h1>
-                </header>
-
-                <section className="all-movies">
-                    <h2>All Movies</h2>
-                    {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-                </section>
-
-            </div>
-        </main>
-    )
+  return (
+    <div className="min-h-screen bg-gray-900">
+      <Navbar onSearch={handleSearch} />
+      <div className="container mx-auto px-4 pt-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-8">
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+        
+        {error && (
+          <div className="text-red-500 text-center my-4">{error}</div>
+        )}
+        
+        {loading ? (
+          <div className="text-white text-center my-4">Loading...</div>
+        ) : (
+          <div className="flex justify-center my-8">
+            <button
+              onClick={loadMore}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Load More
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default App;
