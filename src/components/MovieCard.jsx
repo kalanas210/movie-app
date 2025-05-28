@@ -1,10 +1,16 @@
+import { useNavigate } from 'react-router-dom';
+
 const MovieCard = ({ movie }) => {
+  const navigate = useNavigate();
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : 'https://via.placeholder.com/500x750?text=No+Image+Available';
 
   return (
-    <div className="max-w-sm bg-gray-800 border border-gray-700 rounded-lg shadow">
+    <div 
+      className="max-w-sm bg-gray-800 border border-gray-700 rounded-lg shadow cursor-pointer transform transition-transform hover:scale-105"
+      onClick={() => navigate(`/movie/${movie.id}`)}
+    >
       <img
         className="rounded-t-lg w-full h-[400px] object-cover"
         src={posterUrl}
