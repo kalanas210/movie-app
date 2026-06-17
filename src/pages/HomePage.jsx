@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
-import MovieCard from './MovieCard';
+import MovieCard from '../components/MovieCard';
 import { getPopularMovies, searchMovies } from '../services/movieApi';
-import { SearchContext } from './Navbar';
+import { SearchContext } from '../context/SearchContext';
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -18,7 +18,7 @@ const HomePage = () => {
         : await getPopularMovies(pageNum);
       setMovies(prevMovies => pageNum === 1 ? data.results : [...prevMovies, ...data.results]);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to fetch movies. Please try again later.');
     } finally {
       setLoading(false);
