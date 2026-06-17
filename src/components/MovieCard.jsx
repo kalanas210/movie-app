@@ -21,9 +21,9 @@ const MovieCard = ({ movie }) => {
           {movie.title}
         </h5>
         <p className="mb-3 font-normal text-gray-400">
-          {movie.overview.length > 150
+          {movie.overview?.length > 150
             ? `${movie.overview.substring(0, 150)}...`
-            : movie.overview}
+            : movie.overview || 'No overview available.'}
         </p>
         <div className="flex justify-between items-center">
           <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">

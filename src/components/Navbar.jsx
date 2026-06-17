@@ -1,22 +1,12 @@
-import { useState, createContext, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-
-export const SearchContext = createContext();
-
-export const SearchProvider = ({ children }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
-      {children}
-    </SearchContext.Provider>
-  );
-};
+import { SearchContext } from '../context/SearchContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { searchQuery, setSearchQuery } = useContext(SearchContext);
+  const { setSearchQuery } = useContext(SearchContext);
   const [localSearchTerm, setLocalSearchTerm] = useState('');
 
   const handleSubmit = (e) => {
